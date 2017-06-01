@@ -427,6 +427,8 @@ type buffer struct {
 
 var logging loggingT
 
+var cr = caller.DefaultCallResolver
+
 // setVState sets a consistent state for V logging.
 // l.mu is held.
 func (l *loggingT) setVState(verbosity Level, filter []modulePat, setFilter bool) {
@@ -498,7 +500,7 @@ var timeNow = time.Now // Stubbed out for testing.
 //   msg              The user-supplied message
 //
 func (l *loggingT) header(s severity, depth int) (*buffer, string, int) {
-	file, line, _ := caller.Lookup(3 + depth)
+	file, line, _ := cr.Lookup(3 + depth)
 	return l.formatHeader(s, file, line), file, line
 }
 
@@ -572,7 +574,7 @@ func (l *loggingT) formatHeader(s severity, file string, line int) *buffer {
 
 	lineNumberLength := int(math.Log10(float64(line)) + 1)
 
-	fileMax := 32
+	fileMax := 24
 	// 24 chars minus space for ':' and line number
 	charsLeft := fileMax - (lineNumberLength + 1)
 
@@ -1030,7 +1032,7 @@ func makeMessage(format string, args []interface{}) string {
 }
 
 func log(ctx context.Context, depth int, sev severity, format string, args []interface{}) {
-	file, line, _ := caller.Lookup(depth + 2)
+	file, line, _ := cr.Lookup(depth + 2)
 	buf := logging.formatHeader(sev, file, line)
 
 	msg := makeMessage(format, args)
@@ -1038,6 +1040,10 @@ func log(ctx context.Context, depth int, sev severity, format string, args []int
 	buf.WriteString(msg)
 
 	logging.output(sev, buf, file, line, false)
+}
+
+func SetCallResolver(r *caller.CallResolver) {
+	cr = r
 }
 
 // Info is equivalent to the global Info function, guarded by the value of v.
