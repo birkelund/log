@@ -37,8 +37,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"goober.dk/p/util/caller"
-
+	"github.com/kbj/caller"
 	"github.com/petermattis/goid"
 )
 

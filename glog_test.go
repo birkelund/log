@@ -189,7 +189,7 @@ func TestHeader(t *testing.T) {
 	gid := goid.Get()
 	Info(context.Background(), "test")
 	var line int
-	format := fmt.Sprintf(string(Green)+string(Bold)+"I20060102"+string(Reset)+" 15:04:05.067890 %7d %-32s; test\n", gid, "log/glog_test.go:%d")
+	format := fmt.Sprintf(string(Green)+string(Bold)+"I20060102"+string(Reset)+" 15:04:05.067890 %7d %-24s; test\n", gid, "glog_test.go:%d")
 	n, err := fmt.Sscanf(contents(infoLog), format, &line)
 	if n != 1 || err != nil {
 		t.Errorf("log format error: %d elements, error %s:\n%s", n, err, contents(infoLog))
